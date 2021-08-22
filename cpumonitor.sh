@@ -1,17 +1,16 @@
 #!/bin/bash
-cpuuse=$(cat /proc/loadavg | awk '{print $3}'|cut -f 1 -d ".")
-if [ "$cpuuse" -ge 90 ]; then
+cpuuse=$(ps aux | awk '{print $3}'|cut -f 1 -d ".")
+if [ "$cpuuse" -ge 30 ]; then
 SUBJECT="ATTENTION: CPU load is high on $(hostname) at $(date)"
 MESSAGE="/tmp/Mail.out"
-TO="example@gmail.com"
+TO="cloudperis1@gmail.com"
   echo "CPU current usage is: $cpuuse%" >> $MESSAGE
   echo "" >> $MESSAGE
   echo "+------------------------------------------------------------------+" >> $MESSAGE
-  echo "Top 20 processes which consuming high CPU" >> $MESSAGE
+  echo "Top 20 processes which consuming very high CPU" >> $MESSAGE
   echo "+------------------------------------------------------------------+" >> $MESSAGE
   echo "$(top -bn1 | head -20)" >> $MESSAGE
   echo "" >> $MESSAGE
-  echo "+------------------------------------------------------------------+" >> $MESSAGE
   echo "Top 10 Processes which consuming high CPU using the ps command" >> $MESSAGE
   echo "+------------------------------------------------------------------+" >> $MESSAGE
   echo "$(ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10)" >> $MESSAGE
@@ -21,5 +20,3 @@ else
 echo "Server CPU usage is in under threshold"
   fi
 
-# crontab -e
-*/10 * * * * /bin/bash /opt/scripts/cpu-alert.sh
